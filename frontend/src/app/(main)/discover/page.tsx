@@ -137,10 +137,7 @@ export default function DiscoverPage() {
   // Ítems a mostrar según el estado actual
   const getItems = (): TMDBMediaItem[] => {
     if (isSearching) {
-      const results =
-        (searchResults?.results as TMDBMediaItem[] | undefined) ??
-        ((searchResults as any) as TMDBMediaItem[] | undefined) ??
-        [];
+      const results: TMDBMediaItem[] = searchResults ?? [];
       if (filter === 'movie') return results.filter((i) => i.media_type === 'movie');
       if (filter === 'tv')    return results.filter((i) => i.media_type === 'tv');
       return results;

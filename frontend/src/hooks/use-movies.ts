@@ -14,7 +14,7 @@ export function useTrending(type: 'movie' | 'tv' | 'all' = 'all') {
 }
 
 export function useMovieSearch(query: string) {
-  return useQuery({
+  return useQuery<TMDBMediaItem[]>({
     queryKey: ['search', query],
     queryFn: () => api.get(`/movies/search?q=${encodeURIComponent(query)}`),
     enabled: query.length > 2,

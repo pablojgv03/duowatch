@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import type { Friendship, FriendRequest } from '@/types';
+import type { Friendship, FriendRequest, PublicUser } from '@/types';
 import toast from 'react-hot-toast';
 
 export function useFriends() {
@@ -76,7 +76,7 @@ export function useRemoveFriend() {
 }
 
 export function useUserSearch(query: string) {
-  return useQuery({
+  return useQuery<PublicUser[]>({
     queryKey: ['userSearch', query],
     queryFn: () => api.get(`/users/search?q=${encodeURIComponent(query)}`),
     enabled: query.length > 1,

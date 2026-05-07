@@ -185,9 +185,9 @@ export default function FriendsPage() {
               <div className="space-y-3">
                 {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-14 rounded-xl" />)}
               </div>
-            ) : searchResults?.length > 0 ? (
+            ) : (searchResults?.length ?? 0) > 0 ? (
               <div className="space-y-2">
-                {searchResults.map((user: any) => (
+                {(searchResults ?? []).map((user) => (
                   <SearchResult
                     key={user.id}
                     user={user}
