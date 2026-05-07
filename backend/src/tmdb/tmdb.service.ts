@@ -48,7 +48,7 @@ export class TmdbService {
   constructor(private config: ConfigService) {
     this.client = axios.create({
       baseURL: config.get('TMDB_BASE_URL', 'https://api.themoviedb.org/3'),
-      params: { api_key: config.get('TMDB_API_KEY') },
+      params: { api_key: config.get('TMDB_API_KEY'), language: 'es-ES' },
     });
     this.imageBase = config.get('TMDB_IMAGE_BASE_URL', 'https://image.tmdb.org/t/p');
   }
@@ -109,7 +109,7 @@ export class TmdbService {
   }) {
     const { data } = await this.client.get('/discover/movie', {
       params: {
-        with_genres: params.genres?.join(','),
+        with_genres: params.genres?.join('|'),
         'vote_average.gte': params.minRating || 5,
         page: params.page || 1,
         with_original_language: params.language,
@@ -128,7 +128,7 @@ export class TmdbService {
   }) {
     const { data } = await this.client.get('/discover/tv', {
       params: {
-        with_genres: params.genres?.join(','),
+        with_genres: params.genres?.join('|'),
         'vote_average.gte': params.minRating || 5,
         page: params.page || 1,
         with_original_language: params.language,
@@ -147,6 +147,16 @@ export class TmdbService {
   async getTVGenres() {
     const { data } = await this.client.get('/genre/tv/list');
     return data.genres as TMDBGenre[];
+  }
+
+  async getSimilarMovies(tmdbId: number) {
+    const { data } = await this.client.get(`/movie/${tmdbId}/similar`);
+    return data.results as TMDBMovie[];
+  }
+
+  async getSimilarTV(tmdbId: number) {
+    const { data } = await this.client.get(`/tv/${tmdbId}/similar`);
+    return data.results as TMDBTVShow[];
   }
 
   async getMoviesByIds(ids: number[]) {

@@ -30,9 +30,14 @@ export function useSocket() {
       console.log('🔌 Socket connected');
     });
 
-    socket.on('new_match', ({ match }: { match: Match }) => {
+    socket.on('new_match', ({ match, friend }: { match: Match; friend?: { displayName: string | null; username: string } }) => {
       queryClient.invalidateQueries({ queryKey: ['matches'] });
-      toast.success(`🎬 ¡Match con "${match.title}"!`, { duration: 5000 });
+      const friendName = friend?.displayName || friend?.username || 'tu amigo/a';
+      toast.success(`¡Has hecho match con ${friendName}!\n"${match.title}"`, {
+        duration: 6000,
+        icon: '🎬',
+        style: { background: '#1c1c2e', color: '#fff', border: '1px solid rgba(139,92,246,0.4)' },
+      });
     });
 
     socket.on('friend_request', ({ request, requester }: { request: FriendRequest; requester: any }) => {

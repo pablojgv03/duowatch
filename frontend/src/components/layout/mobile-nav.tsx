@@ -2,16 +2,16 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Compass, Sparkles, Users, User } from 'lucide-react';
+import { LayoutDashboard, Compass, Sparkles, Users, Flame } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNotificationsStore } from '@/store/notifications.store';
 
 const navItems = [
   { href: '/dashboard', label: 'Inicio', icon: LayoutDashboard },
   { href: '/discover', label: 'Descubrir', icon: Compass },
+  { href: '/swipe', label: 'Matchear', icon: Flame },
   { href: '/matches', label: 'Matches', icon: Sparkles },
   { href: '/friends', label: 'Amigos', icon: Users },
-  { href: '/profile', label: 'Perfil', icon: User },
 ];
 
 export function MobileNav() {

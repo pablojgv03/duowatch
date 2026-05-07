@@ -7,6 +7,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { useMatches, useMatchStats } from '@/hooks/use-matches';
 import { useFriends, useFriendRequests } from '@/hooks/use-friends';
 import { useTrending } from '@/hooks/use-movies';
+import { useMovieDetailStore } from '@/store/movie-detail.store';
 import { MatchCard } from '@/components/match/match-card';
 import { MovieCard } from '@/components/movie/movie-card';
 import { Button } from '@/components/ui/button';
@@ -14,7 +15,24 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { cn, getAvatarUrl, formatRelativeDate } from '@/lib/utils';
-import type { TMDBMediaItem } from '@/types';
+import type { TMDBMediaItem, Match } from '@/types';
+
+function matchToItem(match: Match): TMDBMediaItem {
+  const isMovie = match.mediaType === 'MOVIE';
+  return {
+    id: match.tmdbId,
+    media_type: isMovie ? 'movie' : 'tv',
+    ...(isMovie ? { title: match.title, release_date: '' } : { name: match.title, first_air_date: '' }),
+    overview: match.overview || '',
+    poster_path: match.posterPath || null,
+    backdrop_path: null,
+    vote_average: match.voteAverage,
+    vote_count: 0,
+    genre_ids: [],
+    popularity: 0,
+    original_language: 'en',
+  } as unknown as TMDBMediaItem;
+}
 
 function StatCard({ icon: Icon, label, value, color }: { icon: any; label: string; value: number | string; color: string }) {
   return (
@@ -35,6 +53,7 @@ export default function DashboardPage() {
   const { data: friends } = useFriends();
   const { data: requests } = useFriendRequests();
   const { data: trending, isLoading: trendingLoading } = useTrending('all');
+  const openDetail = useMovieDetailStore((s) => s.open);
 
   const recentMatches = matches?.slice(0, 4) || [];
   const trendingItems = (trending as TMDBMediaItem[] | undefined)?.slice(0, 8) || [];
@@ -139,7 +158,7 @@ export default function DashboardPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
               >
-                <MatchCard match={match} />
+                <MatchCard match={match} onClick={() => openDetail(matchToItem(match))} />
               </motion.div>
             ))}
           </div>
@@ -187,7 +206,7 @@ export default function DashboardPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: i * 0.05 }}
               >
-                <MovieCard item={item} variant="compact" />
+                <MovieCard item={item} variant="compact" onClick={() => openDetail(item)} />
               </motion.div>
             ))}
           </div>

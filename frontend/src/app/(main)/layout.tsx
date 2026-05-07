@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/layout/sidebar';
 import { MobileNav } from '@/components/layout/mobile-nav';
+import { MovieDetailModal } from '@/components/movie/movie-detail-modal';
 import { useAuthStore } from '@/store/auth.store';
 import { useSocket } from '@/hooks/use-socket';
 
@@ -34,6 +35,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         {children}
       </main>
       <MobileNav />
+      <MovieDetailModal />
     </div>
   );
 }

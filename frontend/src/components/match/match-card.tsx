@@ -12,9 +12,10 @@ import { useAuthStore } from '@/store/auth.store';
 interface MatchCardProps {
   match: Match;
   className?: string;
+  onClick?: () => void;
 }
 
-export function MatchCard({ match, className }: MatchCardProps) {
+export function MatchCard({ match, className, onClick }: MatchCardProps) {
   const { user } = useAuthStore();
   const posterUrl = getPosterUrl(match.posterPath);
   const isMovie = match.mediaType === 'MOVIE';
@@ -29,6 +30,7 @@ export function MatchCard({ match, className }: MatchCardProps) {
       )}
       whileHover={{ y: -4, scale: 1.01 }}
       transition={{ duration: 0.2 }}
+      onClick={onClick}
     >
       <div className="relative aspect-[16/9] w-full overflow-hidden">
         {posterUrl ? (

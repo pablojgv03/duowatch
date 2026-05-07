@@ -13,6 +13,7 @@ import {
   LogOut,
   Film,
   Bell,
+  Flame,
 } from 'lucide-react';
 import { cn, getAvatarUrl } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth.store';
@@ -23,7 +24,8 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 const navItems = [
   { href: '/dashboard', label: 'Inicio', icon: LayoutDashboard },
   { href: '/discover', label: 'Descubrir', icon: Compass },
-  { href: '/matches', label: 'Matches', icon: Sparkles },
+  { href: '/swipe', label: 'Matchear', icon: Flame },
+  { href: '/matches', label: 'Mis Matches', icon: Sparkles },
   { href: '/friends', label: 'Amigos', icon: Users },
   { href: '/profile', label: 'Mi Perfil', icon: User },
   { href: '/settings', label: 'Ajustes', icon: Settings },

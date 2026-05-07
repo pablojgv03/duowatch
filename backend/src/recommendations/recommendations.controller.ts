@@ -13,8 +13,12 @@ export class RecommendationsController {
 
   @Get()
   @ApiOperation({ summary: 'Get personalized recommendations for current user' })
-  getPersonalized(@CurrentUser('id') userId: string, @Query('page') page = 1) {
-    return this.service.getPersonalized(userId, Number(page));
+  getPersonalized(
+    @CurrentUser('id') userId: string,
+    @Query('page') page = 1,
+    @Query('type') type?: 'movie' | 'tv',
+  ) {
+    return this.service.getPersonalized(userId, Number(page), type);
   }
 
   @Get('duo/:friendId')

@@ -70,6 +70,17 @@ export class MatchesService {
       },
     });
 
+    const [userAInfo, userBInfo] = await Promise.all([
+      this.prisma.user.findUnique({
+        where: { id: userAId },
+        select: { id: true, username: true, displayName: true, avatarUrl: true },
+      }),
+      this.prisma.user.findUnique({
+        where: { id: userBId },
+        select: { id: true, username: true, displayName: true, avatarUrl: true },
+      }),
+    ]);
+
     await Promise.all([
       this.notifications.create({
         userId: userAId,
@@ -87,8 +98,8 @@ export class MatchesService {
       }),
     ]);
 
-    this.gateway.notifyUser(userAId, 'new_match', { match });
-    this.gateway.notifyUser(userBId, 'new_match', { match });
+    this.gateway.notifyUser(userAId, 'new_match', { match, friend: userBInfo });
+    this.gateway.notifyUser(userBId, 'new_match', { match, friend: userAInfo });
 
     return match;
   }

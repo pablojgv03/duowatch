@@ -6,13 +6,33 @@ import { Sparkles, Film, Tv, Trophy, Users, TrendingUp } from 'lucide-react';
 import { useMatches, useMatchStats } from '@/hooks/use-matches';
 import { useFriends } from '@/hooks/use-friends';
 import { MatchCard } from '@/components/match/match-card';
+import { useMovieDetailStore } from '@/store/movie-detail.store';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { cn, getAvatarUrl, getScoreColor } from '@/lib/utils';
-import type { Match } from '@/types';
+import type { Match, TMDBMediaItem } from '@/types';
 
 type FilterType = 'all' | 'MOVIE' | 'TV';
+
+function matchToItem(match: Match): TMDBMediaItem {
+  const isMovie = match.mediaType === 'MOVIE';
+  return {
+    id: match.tmdbId,
+    media_type: isMovie ? 'movie' : 'tv',
+    ...(isMovie
+      ? { title: match.title, release_date: '' }
+      : { name: match.title, first_air_date: '' }),
+    overview: match.overview || '',
+    poster_path: match.posterPath || null,
+    backdrop_path: null,
+    vote_average: match.voteAverage,
+    vote_count: 0,
+    genre_ids: [],
+    popularity: 0,
+    original_language: 'en',
+  } as unknown as TMDBMediaItem;
+}
 
 export default function MatchesPage() {
   const [filter, setFilter] = useState<FilterType>('all');
@@ -20,6 +40,7 @@ export default function MatchesPage() {
   const { data: matches, isLoading } = useMatches();
   const { data: stats } = useMatchStats();
   const { data: friends } = useFriends();
+  const openDetail = useMovieDetailStore((s) => s.open);
 
   const filteredMatches = (matches || []).filter((m: Match) => {
     if (filter !== 'all' && m.mediaType !== filter) return false;
@@ -133,7 +154,7 @@ export default function MatchesPage() {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ delay: Math.min(i * 0.05, 0.3) }}
               >
-                <MatchCard match={match} />
+                <MatchCard match={match} onClick={() => openDetail(matchToItem(match))} />
               </motion.div>
             ))}
           </AnimatePresence>

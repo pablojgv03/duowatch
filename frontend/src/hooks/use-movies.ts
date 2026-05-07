@@ -38,11 +38,21 @@ export function useTVGenres() {
   });
 }
 
-export function useRecommendations(page = 1) {
+export function useRecommendations(page = 1, type?: 'movie' | 'tv') {
+  const params = new URLSearchParams({ page: String(page) });
+  if (type) params.set('type', type);
   return useQuery({
-    queryKey: ['recommendations', page],
-    queryFn: () => api.get(`/recommendations?page=${page}`),
+    queryKey: ['recommendations', page, type ?? 'all'],
+    queryFn: () => api.get(`/recommendations?${params}`),
     staleTime: 1000 * 60 * 5,
+  });
+}
+
+export function useWatchlistMovies() {
+  return useQuery<MovieInteraction[]>({
+    queryKey: ['interactions', 'watchlist'],
+    queryFn: () => api.get('/interactions/me/watchlist'),
+    staleTime: 1000 * 60 * 2,
   });
 }
 
@@ -71,6 +81,32 @@ export function useLikedMovies() {
   });
 }
 
+interface TMDBDetailResult {
+  backdrop_path: string | null;
+  overview: string;
+  genres: { id: number; name: string }[];
+  runtime?: number;
+  number_of_seasons?: number;
+  vote_average: number;
+  release_date?: string;
+  first_air_date?: string;
+  videos?: {
+    results: { key: string; site: string; type: string; official?: boolean; name: string }[];
+  };
+}
+
+export function useMovieDetail(item: { id: number; media_type: 'movie' | 'tv' } | null) {
+  return useQuery<TMDBDetailResult>({
+    queryKey: ['movie-detail', item?.id, item?.media_type],
+    queryFn: () =>
+      (item!.media_type === 'movie'
+        ? api.get(`/movies/${item!.id}`)
+        : api.get(`/movies/tv/${item!.id}`)) as Promise<TMDBDetailResult>,
+    enabled: !!item,
+    staleTime: 1000 * 60 * 30,
+  });
+}
+
 export function useInteract() {
   const queryClient = useQueryClient();
 
@@ -92,6 +128,8 @@ export function useInteract() {
 
       if (data.action === 'LIKED') {
         toast.success('¡Añadido a tus likes!', { icon: '❤️' });
+      } else if (data.action === 'DISLIKED') {
+        toast('Descartada', { icon: '✕', style: { background: '#1c1c2e', color: '#a0a0b0' } });
       } else if (data.action === 'WANT_TO_WATCH') {
         toast.success('Añadido a tu lista', { icon: '📋' });
       } else if (data.action === 'WATCHED') {
