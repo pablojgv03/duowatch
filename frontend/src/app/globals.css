@@ -1,0 +1,140 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 15% 4%;
+    --foreground: 210 40% 96%;
+    --card: 240 12% 7%;
+    --card-foreground: 210 40% 96%;
+    --popover: 240 12% 7%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 263 70% 50%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 240 8% 12%;
+    --secondary-foreground: 210 40% 96%;
+    --muted: 240 8% 14%;
+    --muted-foreground: 215 20% 55%;
+    --accent: 263 70% 50%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 240 8% 14%;
+    --input: 240 8% 14%;
+    --ring: 263 70% 50%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-violet-700;
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-violet-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-match {
+    @apply bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent;
+  }
+
+  .glow-violet {
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.4), 0 0 60px rgba(124, 58, 237, 0.15);
+  }
+
+  .glow-violet-sm {
+    box-shadow: 0 0 10px rgba(124, 58, 237, 0.3);
+  }
+
+  .card-cinema {
+    @apply glass rounded-2xl transition-all duration-300;
+  }
+
+  .card-cinema:hover {
+    border-color: rgba(124, 58, 237, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(124, 58, 237, 0.15);
+  }
+
+  .poster-card {
+    @apply relative overflow-hidden rounded-xl transition-all duration-300 cursor-pointer;
+    transform-style: preserve-3d;
+  }
+
+  .poster-card:hover {
+    @apply scale-105;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(124, 58, 237, 0.2);
+  }
+
+  .btn-primary {
+    @apply bg-violet-600 hover:bg-violet-500 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200;
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 6px 25px rgba(124, 58, 237, 0.6);
+    transform: translateY(-1px);
+  }
+
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground transition-all duration-200 hover:text-foreground hover:bg-white/5;
+  }
+
+  .nav-item.active {
+    @apply text-violet-400 bg-violet-500/10;
+    box-shadow: inset 0 0 0 1px rgba(124, 58, 237, 0.2);
+  }
+
+  .skeleton {
+    @apply animate-pulse bg-muted/60 rounded-lg;
+  }
+}
+
+.react-hot-toast-container {
+  z-index: 9999;
+}
