@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateNotificationsDto } from './dto/update-notifications.dto';
 
 @Injectable()
 export class UsersService {
@@ -104,6 +105,15 @@ export class UsersService {
     const user = await this.prisma.user.update({
       where: { id: userId },
       data: { isOnboarded: true },
+    });
+    const { passwordHash, refreshToken, ...safeUser } = user;
+    return safeUser;
+  }
+
+  async updateNotifications(userId: string, dto: UpdateNotificationsDto) {
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: { emailNotifications: dto.emailNotifications },
     });
     const { passwordHash, refreshToken, ...safeUser } = user;
     return safeUser;

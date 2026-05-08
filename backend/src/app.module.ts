@@ -12,6 +12,7 @@ import { PreferencesModule } from './preferences/preferences.module';
 import { RecommendationsModule } from './recommendations/recommendations.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { GatewayModule } from './gateway/gateway.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { GatewayModule } from './gateway/gateway.module';
     RecommendationsModule,
     NotificationsModule,
     GatewayModule,
+    EmailModule,
   ],
 })
 export class AppModule {}

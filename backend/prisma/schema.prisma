@@ -20,6 +20,13 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  emailVerified           Boolean   @default(false)
+  emailVerificationToken  String?   @unique
+  emailVerificationExpiry DateTime?
+  resetPasswordToken      String?   @unique
+  resetPasswordExpiry     DateTime?
+  emailNotifications      Boolean   @default(true)
+
   sentRequests     FriendRequest[]  @relation("Requester")
   receivedRequests FriendRequest[]  @relation("Receiver")
   friendshipsA     Friendship[]     @relation("UserA")

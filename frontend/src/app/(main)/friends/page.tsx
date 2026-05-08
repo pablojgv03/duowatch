@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Search, UserPlus, Check, X, Loader2, UserX, Sparkles } from 'lucide-react';
+import { Users, Search, UserPlus, Check, X, Loader2, UserX, Sparkles, Users2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -248,10 +248,14 @@ export default function FriendsPage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-16">
-                <Users className="h-16 w-16 text-muted-foreground/20 mx-auto mb-4" />
-                <p className="font-semibold text-lg">Aún no tienes amigos</p>
-                <p className="text-sm text-muted-foreground">Busca a tus amigos con el buscador de arriba</p>
+              <div className="flex flex-col items-center py-16 text-center">
+                <div className="glass p-5 rounded-2xl mb-6">
+                  <Users2 className="h-12 w-12 text-emerald-400" />
+                </div>
+                <h2 className="text-xl font-bold text-white mb-2">Aún no tienes amigos</h2>
+                <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
+                  Busca a tus amigos por username y empieza a hacer matches juntos.
+                </p>
               </div>
             )}
           </motion.div>
@@ -277,10 +281,14 @@ export default function FriendsPage() {
                 </AnimatePresence>
               </div>
             ) : (
-              <div className="text-center py-16">
-                <UserPlus className="h-16 w-16 text-muted-foreground/20 mx-auto mb-4" />
-                <p className="font-semibold">Sin solicitudes pendientes</p>
-                <p className="text-sm text-muted-foreground">Cuando alguien quiera ser tu amigo aparecerá aquí</p>
+              <div className="flex flex-col items-center py-16 text-center">
+                <div className="glass p-5 rounded-2xl mb-6">
+                  <UserPlus className="h-12 w-12 text-violet-400" />
+                </div>
+                <h2 className="text-xl font-bold text-white mb-2">Sin solicitudes pendientes</h2>
+                <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
+                  Cuando alguien quiera ser tu amigo aparecerá aquí.
+                </p>
               </div>
             )}
           </motion.div>

@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Settings, Film, Tv, Check, Save, Loader2, LogOut, Trash2, Star } from 'lucide-react';
+import { Settings, Film, Tv, Check, Save, Loader2, LogOut, Bell, BellOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { useLogout } from '@/hooks/use-auth';
+import { useLogout, useUpdateNotifications, useMe } from '@/hooks/use-auth';
 import toast from 'react-hot-toast';
 import type { UserPreferences } from '@/types';
 
@@ -46,6 +46,8 @@ export default function SettingsPage() {
   const [minRating, setMinRating] = useState(5);
   const queryClient = useQueryClient();
   const logout = useLogout();
+  const { data: me } = useMe();
+  const updateNotifications = useUpdateNotifications();
 
   const { data: prefs, isLoading } = useQuery<UserPreferences>({
     queryKey: ['preferences'],
@@ -199,6 +201,26 @@ export default function SettingsPage() {
             <><Save className="h-4 w-4" /> Guardar preferencias</>
           )}
         </Button>
+      </div>
+
+      <div className="card-cinema p-6 space-y-4">
+        <h2 className="text-xl font-bold">Notificaciones</h2>
+        <div className="flex items-center justify-between p-4 glass rounded-xl border border-white/5">
+          <div>
+            <p className="font-medium">Notificaciones de matches por email</p>
+            <p className="text-sm text-muted-foreground">Recibe un email cuando hagas match con un amigo</p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => updateNotifications.mutate(!me?.emailNotifications)}
+            disabled={updateNotifications.isPending || !me}
+            className={me?.emailNotifications ? 'border-violet-500/40 text-violet-300' : 'border-white/10 text-muted-foreground'}
+          >
+            {me?.emailNotifications ? <Bell className="h-4 w-4 mr-1.5" /> : <BellOff className="h-4 w-4 mr-1.5" />}
+            {me?.emailNotifications ? 'Activadas' : 'Desactivadas'}
+          </Button>
+        </div>
       </div>
 
       <div className="card-cinema p-6 space-y-4 border border-destructive/20">

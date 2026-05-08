@@ -6,6 +6,8 @@ export interface User {
   bio: string | null;
   avatarUrl: string | null;
   isOnboarded: boolean;
+  emailVerified: boolean;
+  emailNotifications: boolean;
   createdAt: string;
   updatedAt: string;
   stats?: {
@@ -37,6 +39,11 @@ export interface AuthResponse {
   user: User;
   accessToken: string;
   refreshToken: string;
+}
+
+export interface RegisterResponse {
+  message: string;
+  email: string;
 }
 
 export interface Friendship {

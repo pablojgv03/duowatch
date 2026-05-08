@@ -11,6 +11,7 @@ import {
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateNotificationsDto } from './dto/update-notifications.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 
@@ -37,6 +38,15 @@ export class UsersController {
   @ApiOperation({ summary: 'Mark user as onboarded' })
   completeOnboarding(@CurrentUser('id') userId: string) {
     return this.usersService.completeOnboarding(userId);
+  }
+
+  @Patch('me/notifications')
+  @ApiOperation({ summary: 'Update email notification preferences' })
+  updateNotifications(
+    @CurrentUser('id') userId: string,
+    @Body() dto: UpdateNotificationsDto,
+  ) {
+    return this.usersService.updateNotifications(userId, dto);
   }
 
   @Get('search')

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Film, Tv, Trophy, Users, TrendingUp } from 'lucide-react';
+import { Sparkles, Film, Tv, Trophy, Users, TrendingUp, Heart } from 'lucide-react';
 import { useMatches, useMatchStats } from '@/hooks/use-matches';
 import { useFriends } from '@/hooks/use-friends';
 import { MatchCard } from '@/components/match/match-card';
@@ -161,12 +161,16 @@ export default function MatchesPage() {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <Sparkles className="h-16 w-16 text-muted-foreground/20 mb-4" />
-          <p className="font-semibold text-lg mb-2">
-            {selectedFriendId ? 'No hay matches con este amigo aún' : 'Aún no tienes matches'}
-          </p>
-          <p className="text-sm text-muted-foreground max-w-sm">
-            Ve a Descubrir, da like a películas y cuando un amigo también les guste ¡aparecerán aquí!
+          <div className="glass p-5 rounded-2xl mb-6">
+            <Heart className="h-12 w-12 text-violet-400" />
+          </div>
+          <h2 className="text-xl font-bold text-white mb-2">
+            {selectedFriendId ? 'No hay matches con este amigo aún' : 'Sin matches todavía'}
+          </h2>
+          <p className="text-sm text-muted-foreground max-w-sm leading-relaxed">
+            {selectedFriendId
+              ? 'Daos likes a las mismas películas para que aparezcan aquí.'
+              : 'Empieza a dar likes en /matchear para hacer tu primer match con un amigo.'}
           </p>
         </div>
       )}

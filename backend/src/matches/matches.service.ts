@@ -2,6 +2,7 @@ import { Injectable, forwardRef, Inject } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { EventsGateway } from '../gateway/events.gateway';
+import { EmailService } from '../email/email.service';
 import { MediaType } from '@prisma/client';
 
 @Injectable()
@@ -10,6 +11,7 @@ export class MatchesService {
     private prisma: PrismaService,
     private notifications: NotificationsService,
     private gateway: EventsGateway,
+    private emailService: EmailService,
   ) {}
 
   async checkAndCreateMatches(
@@ -73,11 +75,11 @@ export class MatchesService {
     const [userAInfo, userBInfo] = await Promise.all([
       this.prisma.user.findUnique({
         where: { id: userAId },
-        select: { id: true, username: true, displayName: true, avatarUrl: true },
+        select: { id: true, username: true, displayName: true, avatarUrl: true, email: true, emailNotifications: true },
       }),
       this.prisma.user.findUnique({
         where: { id: userBId },
-        select: { id: true, username: true, displayName: true, avatarUrl: true },
+        select: { id: true, username: true, displayName: true, avatarUrl: true, email: true, emailNotifications: true },
       }),
     ]);
 
@@ -100,6 +102,27 @@ export class MatchesService {
 
     this.gateway.notifyUser(userAId, 'new_match', { match, friend: userBInfo });
     this.gateway.notifyUser(userBId, 'new_match', { match, friend: userAInfo });
+
+    // Send email notifications if user has them enabled
+    if (userAInfo?.emailNotifications) {
+      const friendName = userBInfo?.displayName || userBInfo?.username || 'tu amigo/a';
+      this.emailService.sendMatchNotificationEmail(
+        userAInfo.email,
+        friendName,
+        title,
+        posterPath ?? null,
+      ).catch(() => {});
+    }
+
+    if (userBInfo?.emailNotifications) {
+      const friendName = userAInfo?.displayName || userAInfo?.username || 'tu amigo/a';
+      this.emailService.sendMatchNotificationEmail(
+        userBInfo.email,
+        friendName,
+        title,
+        posterPath ?? null,
+      ).catch(() => {});
+    }
 
     return match;
   }
