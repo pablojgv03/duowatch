@@ -66,13 +66,6 @@ export class AuthService {
     const passwordMatch = await bcrypt.compare(dto.password, user.passwordHash);
     if (!passwordMatch) throw new UnauthorizedException('Invalid credentials');
 
-    if (!user.emailVerified) {
-      throw new HttpException(
-        { message: 'EMAIL_NOT_VERIFIED', email: user.email },
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
     const tokens = await this.generateTokens(user.id, user.email, user.username);
     await this.saveRefreshToken(user.id, tokens.refreshToken);
 
