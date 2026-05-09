@@ -30,8 +30,9 @@ export class TmdbController {
 
   @Get('search')
   @ApiOperation({ summary: 'Search movies and TV shows' })
-  search(@Query('q') query: string, @Query('page') page = 1) {
-    return this.tmdb.searchMulti(query || '', Number(page));
+  async search(@Query('q') query: string, @Query('page') page = 1) {
+    const { results } = await this.tmdb.searchMulti(query || '', Number(page));
+    return results;
   }
 
   @Get('genres/movie')

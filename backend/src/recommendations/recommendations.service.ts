@@ -22,7 +22,7 @@ export class RecommendationsService {
     private tmdb: TmdbService,
   ) {}
 
-  async getPersonalized(userId: string, page = 1, type?: 'movie' | 'tv') {
+  async getPersonalized(userId: string, page = 1, type?: 'movie' | 'tv', excludeAll = false) {
     const [prefs, interactions] = await Promise.all([
       this.prisma.userPreferences.findUnique({ where: { userId } }),
       this.prisma.movieInteraction.findMany({
@@ -34,9 +34,11 @@ export class RecommendationsService {
     const liked = interactions.filter((i) => i.action === InteractionType.LIKED);
     const disliked = interactions.filter((i) => i.action === InteractionType.DISLIKED);
 
-    // Solo excluir lo que el usuario rechazó explícitamente.
-    // Liked/guardados pueden reaparecer en Discover (ya tienen el icono de corazón).
-    const seenIds = new Set(disliked.map((i) => i.tmdbId));
+    // Discover: solo excluye rechazadas (las favoritas/guardadas aparecen con iconos).
+    // Swipe (excludeAll=true): excluye todas las interacciones para no repetir.
+    const seenIds = excludeAll
+      ? new Set(interactions.map((i) => i.tmdbId))
+      : new Set(disliked.map((i) => i.tmdbId));
 
     const rawGenres = prefs?.favoriteGenres?.length ? prefs.favoriteGenres : [28, 35, 18, 878];
     const movieGenres = rawGenres.slice(0, 4);

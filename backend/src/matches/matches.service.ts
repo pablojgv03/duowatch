@@ -30,13 +30,11 @@ export class MatchesService {
     );
 
     for (const friendId of friendIds) {
-      const friendLiked = await this.prisma.movieInteraction.findUnique({
-        where: {
-          userId_tmdbId_mediaType: { userId: friendId, tmdbId, mediaType },
-        },
+      const friendLiked = await this.prisma.movieInteraction.findFirst({
+        where: { userId: friendId, tmdbId, mediaType, action: 'LIKED' },
       });
 
-      if (friendLiked?.action === 'LIKED') {
+      if (friendLiked) {
         await this.createMatch(userId, friendId, tmdbId, mediaType, title, posterPath);
       }
     }

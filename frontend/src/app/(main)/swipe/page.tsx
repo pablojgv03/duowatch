@@ -38,7 +38,7 @@ export default function SwipePage() {
     try {
       const { page, typeFilter: currentFilter } = useSwipeStore.getState();
       const type = currentFilter !== 'all' ? `&type=${currentFilter}` : '';
-      const data = await api.get(`/recommendations?page=${page}${type}`);
+      const data = await api.get(`/recommendations?page=${page}${type}&exclude=all`);
       incrementPage();
       addItems((data as any) as TMDBMediaItem[]);
     } catch {

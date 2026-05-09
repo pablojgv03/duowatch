@@ -12,12 +12,21 @@ export class InteractionsService {
   ) {}
 
   async upsert(userId: string, dto: CreateInteractionDto) {
+    // LIKED y DISLIKED son mutuamente exclusivos: eliminar el opuesto si existe
+    if (dto.action === InteractionType.LIKED || dto.action === InteractionType.DISLIKED) {
+      const opposite = dto.action === InteractionType.LIKED ? InteractionType.DISLIKED : InteractionType.LIKED;
+      await this.prisma.movieInteraction.deleteMany({
+        where: { userId, tmdbId: dto.tmdbId, mediaType: dto.mediaType, action: opposite },
+      });
+    }
+
     const interaction = await this.prisma.movieInteraction.upsert({
       where: {
-        userId_tmdbId_mediaType: {
+        userId_tmdbId_mediaType_action: {
           userId,
           tmdbId: dto.tmdbId,
           mediaType: dto.mediaType,
+          action: dto.action,
         },
       },
       create: {
@@ -30,12 +39,11 @@ export class InteractionsService {
         posterPath: dto.posterPath,
       },
       update: {
-        action: dto.action,
         rating: dto.rating,
       },
     });
 
-    if (dto.action === 'LIKED') {
+    if (dto.action === InteractionType.LIKED) {
       await this.matchesService.checkAndCreateMatches(userId, dto.tmdbId, dto.mediaType, dto.title, dto.posterPath);
     }
 
@@ -64,10 +72,8 @@ export class InteractionsService {
   }
 
   async getUserInteractionForMedia(userId: string, tmdbId: number, mediaType: MediaType) {
-    return this.prisma.movieInteraction.findUnique({
-      where: {
-        userId_tmdbId_mediaType: { userId, tmdbId, mediaType },
-      },
+    return this.prisma.movieInteraction.findMany({
+      where: { userId, tmdbId, mediaType },
     });
   }
 }

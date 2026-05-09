@@ -103,7 +103,7 @@ model MovieInteraction {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, tmdbId, mediaType])
+  @@unique([userId, tmdbId, mediaType, action])
   @@map("movie_interactions")
 }
 

@@ -17,8 +17,9 @@ export class RecommendationsController {
     @CurrentUser('id') userId: string,
     @Query('page') page = 1,
     @Query('type') type?: 'movie' | 'tv',
+    @Query('exclude') exclude?: string,
   ) {
-    return this.service.getPersonalized(userId, Number(page), type);
+    return this.service.getPersonalized(userId, Number(page), type, exclude === 'all');
   }
 
   @Get('duo/:friendId')
