@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useRef, forwardRef, useImperativeHandle } from 'react';
+import { useRef, forwardRef, useImperativeHandle } from 'react';
 import Image from 'next/image';
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
 import { Heart, X, Bookmark, Star, Film, Tv, Info } from 'lucide-react';
 import { cn, getPosterUrl, formatRating, getRatingColor } from '@/lib/utils';
 import { useInteract } from '@/hooks/use-movies';
+import { useMovieDetailStore } from '@/store/movie-detail.store';
 import type { TMDBMediaItem } from '@/types';
 import { Badge } from '@/components/ui/badge';
 
@@ -25,8 +26,8 @@ export interface SwipeCardRef {
 
 export const SwipeCard = forwardRef<SwipeCardRef, SwipeCardProps>(
   ({ item, onSwipeLeft, onSwipeRight, onBookmark, isTop = false, hideButtons = false }, ref) => {
-    const [showInfo, setShowInfo] = useState(false);
     const interact = useInteract();
+    const openDetail = useMovieDetailStore((s) => s.open);
     const isAnimatingRef = useRef(false);
 
     const x = useMotionValue(0);
@@ -163,23 +164,13 @@ export const SwipeCard = forwardRef<SwipeCardRef, SwipeCardProps>(
           </div>
 
           <div className="absolute bottom-0 left-0 right-0 p-6">
-            {showInfo ? (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="glass-strong rounded-2xl p-4 mb-4"
-              >
-                <p className="text-sm text-foreground/90 line-clamp-4">{item.overview}</p>
-              </motion.div>
-            ) : null}
-
             <div className="flex items-end justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-white mb-1 drop-shadow-lg">{title}</h2>
                 <p className="text-white/70 text-sm">{year}</p>
               </div>
               <button
-                onClick={() => setShowInfo(!showInfo)}
+                onClick={(e) => { e.stopPropagation(); openDetail(item); }}
                 className="h-10 w-10 rounded-full glass flex items-center justify-center text-white/70 hover:text-white transition-colors"
               >
                 <Info className="h-5 w-5" />

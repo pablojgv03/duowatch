@@ -54,7 +54,7 @@ export default function SetupProfilePage() {
       const accessToken = searchParams.get('accessToken')!;
       const refreshToken = searchParams.get('refreshToken')!;
 
-      const user = await api.patch('/users/me', { username: data.username });
+      const user: any = await api.patch('/users/me', { username: data.username });
       setAuth(user, accessToken, refreshToken);
       toast.success(`¡Bienvenido/a a DuoWatch, @${data.username}!`);
       router.replace('/onboarding');

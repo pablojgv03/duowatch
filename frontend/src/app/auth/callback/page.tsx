@@ -24,7 +24,7 @@ export default function AuthCallbackPage() {
     // Pre-set tokens so the api interceptor can use them for /users/me
     useAuthStore.getState().setAuth(null as any, accessToken, refreshToken);
 
-    api.get('/users/me').then((user) => {
+    api.get('/users/me').then((user: any) => {
       setAuth(user, accessToken, refreshToken);
       router.replace(redirect);
     }).catch(() => {

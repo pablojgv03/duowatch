@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Heart, X, Clock, ChevronRight, Flame, RotateCcw, Loader2, Info } from 'lucide-react';
+import { Heart, X, Clock, ChevronRight, Flame, RotateCcw, Loader2 } from 'lucide-react';
 import { SwipeCard, type SwipeCardRef } from '@/components/movie/swipe-card';
 import { useInteract } from '@/hooks/use-movies';
 import { api } from '@/lib/api';
@@ -12,7 +12,6 @@ import { cn } from '@/lib/utils';
 import type { TMDBMediaItem } from '@/types';
 import { getMediaTitle } from '@/types';
 import { useSwipeStore, type SwipeAction, type TypeFilter } from '@/store/swipe.store';
-import { useMovieDetailStore } from '@/store/movie-detail.store';
 
 const TYPE_FILTERS: { value: TypeFilter; label: string }[] = [
   { value: 'all', label: 'Todo' },
@@ -73,7 +72,6 @@ export default function SwipePage() {
 
   const handleExternalLike    = useCallback(() => { cardRef.current?.like(); }, []);
   const handleExternalDislike = useCallback(() => { cardRef.current?.skip(); }, []);
-  const openDetail = useMovieDetailStore((s) => s.open);
 
   const handleReset = () => {
     reset();
@@ -211,20 +209,12 @@ export default function SwipePage() {
       {/* ── Botones externos ─────────────────────────────────────────── */}
       {topItem && (
         <>
-          <div className="w-full max-w-sm mx-auto flex items-center justify-center gap-6 sm:gap-10 mt-3 sm:mt-5 shrink-0">
+          <div className="w-full max-w-sm mx-auto flex items-center justify-center gap-8 sm:gap-14 mt-3 sm:mt-5 shrink-0">
             <button
               onClick={handleExternalDislike}
               className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-cinema-900 border-2 border-red-500/60 flex items-center justify-center text-red-400 hover:bg-red-500 hover:text-white hover:border-red-400 transition-all duration-200 hover:scale-110 shadow-lg"
             >
               <X className="h-5 w-5 sm:h-7 sm:w-7" />
-            </button>
-
-            <button
-              onClick={() => openDetail(topItem)}
-              className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-cinema-900 border-2 border-white/15 flex items-center justify-center text-muted-foreground hover:border-violet-500/60 hover:text-violet-400 transition-all duration-200 hover:scale-110 shadow-lg"
-              title="Ver detalles"
-            >
-              <Info className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
 
             <button

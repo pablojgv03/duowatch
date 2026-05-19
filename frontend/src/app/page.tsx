@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -9,13 +9,20 @@ import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/store/auth.store';
 import { useRouter } from 'next/navigation';
 
-const FEATURED_POSTERS = [
+const ALL_POSTERS = [
   'https://image.tmdb.org/t/p/w342/1E5baAaEse26fej7uHcjOgEE2t2.jpg',
   'https://image.tmdb.org/t/p/w342/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg',
   'https://image.tmdb.org/t/p/w342/kDp1vUBnMpe8ak4rjgl3cLELqjU.jpg',
   'https://image.tmdb.org/t/p/w342/9cqNxx0GxF0bAY4deAmriISEpzQ.jpg',
   'https://image.tmdb.org/t/p/w342/74xTEgt7R36Fpooo50r9T25onhq.jpg',
   'https://image.tmdb.org/t/p/w342/NNxYkU70HPurnNCSiCjYAmacwm.jpg',
+  // backups
+  'https://image.tmdb.org/t/p/w342/gKkl37BQuKTanygYQG1pyYgLVgf.jpg',
+  'https://image.tmdb.org/t/p/w342/rCzpDGLbOoPwLjy3OAm5NUPOTrC.jpg',
+  'https://image.tmdb.org/t/p/w342/qNBAXBIQlnOThrVvA6mA2B5ggkh.jpg',
+  'https://image.tmdb.org/t/p/w342/8cdWjvZQUExUUTzyp4SRqDb1dXd.jpg',
+  'https://image.tmdb.org/t/p/w342/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg',
+  'https://image.tmdb.org/t/p/w342/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg',
 ];
 
 const features = [
@@ -55,10 +62,19 @@ const stats = [
 export default function LandingPage() {
   const { isAuthenticated } = useAuthStore();
   const router = useRouter();
+  const [posters, setPosters] = useState(ALL_POSTERS.slice(0, 6));
+  const nextBackup = useRef(6);
 
   useEffect(() => {
     if (isAuthenticated) router.push('/dashboard');
   }, [isAuthenticated, router]);
+
+  const handlePosterError = (failedUrl: string) => {
+    if (nextBackup.current < ALL_POSTERS.length) {
+      const replacement = ALL_POSTERS[nextBackup.current++];
+      setPosters(prev => prev.map(url => url === failedUrl ? replacement : url));
+    }
+  };
 
   return (
     <div className="min-h-screen bg-cinema-950 overflow-x-hidden">
@@ -141,9 +157,9 @@ export default function LandingPage() {
           >
             <div className="relative h-[600px]">
               <div className="grid grid-cols-3 gap-4 absolute inset-0">
-                {FEATURED_POSTERS.map((url, i) => (
+                {posters.map((url, i) => (
                   <motion.div
-                    key={i}
+                    key={url}
                     className="poster-card rounded-2xl overflow-hidden shadow-2xl"
                     animate={{ y: [0, -8, 0] }}
                     transition={{
@@ -161,27 +177,12 @@ export default function LandingPage() {
                         fill
                         className="object-cover"
                         sizes="150px"
+                        onError={() => handlePosterError(url)}
                       />
                     </div>
                   </motion.div>
                 ))}
               </div>
-
-              <motion.div
-                className="absolute bottom-16 left-1/2 -translate-x-1/2 glass-strong rounded-2xl px-6 py-4 border border-violet-500/30 min-w-64"
-                animate={{ scale: [1, 1.03, 1] }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-gradient-match flex items-center justify-center">
-                    <Sparkles className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-gradient-match">¡Nuevo Match!</p>
-                    <p className="text-xs text-muted-foreground">Dune: Parte 2 — 87% compatibles</p>
-                  </div>
-                </div>
-              </motion.div>
             </div>
           </motion.div>
         </div>

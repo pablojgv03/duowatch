@@ -25,28 +25,35 @@ export function MatchCard({ match, className, onClick }: MatchCardProps) {
   return (
     <motion.div
       className={cn(
-        'relative overflow-hidden rounded-2xl border border-white/5 bg-cinema-900 group cursor-pointer',
+        'relative rounded-2xl border border-white/5 bg-cinema-900 group cursor-pointer hover:shadow-xl hover:shadow-black/40 [clip-path:inset(0_round_1rem)]',
         className,
       )}
-      whileHover={{ y: -4, scale: 1.01 }}
+      whileHover="hover"
+      variants={{ hover: { y: -4 } }}
       transition={{ duration: 0.2 }}
       onClick={onClick}
     >
       <div className="relative aspect-[16/9] w-full overflow-hidden">
-        {posterUrl ? (
-          <Image
-            src={posterUrl}
-            alt={match.title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            sizes="(max-width: 768px) 100vw, 400px"
-          />
-        ) : (
-          <div className="h-full w-full flex items-center justify-center bg-cinema-800">
-            {isMovie ? <Film className="h-16 w-16 text-muted-foreground/30" /> : <Tv className="h-16 w-16 text-muted-foreground/30" />}
-          </div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-cinema-900 via-cinema-900/40 to-transparent" />
+        <motion.div
+          className="absolute inset-0"
+          variants={{ hover: { scale: 1.05 } }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+        >
+          {posterUrl ? (
+            <Image
+              src={posterUrl}
+              alt={match.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 400px"
+            />
+          ) : (
+            <div className="h-full w-full flex items-center justify-center bg-cinema-800">
+              {isMovie ? <Film className="h-16 w-16 text-muted-foreground/30" /> : <Tv className="h-16 w-16 text-muted-foreground/30" />}
+            </div>
+          )}
+        </motion.div>
+        <div className="absolute inset-0 bg-gradient-to-t from-cinema-900 via-cinema-900/50 to-cinema-900/10" />
 
         <div className="absolute top-3 left-3 flex gap-2">
           <Badge variant="match" className="gap-1">
