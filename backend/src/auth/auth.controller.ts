@@ -4,11 +4,15 @@ import {
   Get,
   Body,
   Query,
+  Req,
+  Res,
   UseGuards,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -18,11 +22,44 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RefreshAuthGuard } from './guards/refresh-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private config: ConfigService,
+  ) {}
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  @ApiOperation({ summary: 'Redirect to Google OAuth' })
+  googleAuth() {}
+
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  @ApiOperation({ summary: 'Google OAuth callback' })
+  async googleCallback(@Req() req: Request, @Res() res: Response) {
+    const googleUser = req.user as any;
+    const result = await this.authService.googleAuth(googleUser);
+    const frontendUrl = this.config.get('FRONTEND_URL');
+
+    const params = new URLSearchParams({
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
+    });
+
+    if (result.needsUsername) {
+      return res.redirect(`${frontendUrl}/setup-profile?${params}`);
+    }
+
+    if (!result.isOnboarded) {
+      return res.redirect(`${frontendUrl}/auth/callback?${params}&redirect=/onboarding`);
+    }
+
+    return res.redirect(`${frontendUrl}/auth/callback?${params}&redirect=/dashboard`);
+  }
 
   @Post('register')
   @ApiOperation({ summary: 'Register a new user' })

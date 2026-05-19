@@ -189,6 +189,35 @@ export class AuthService {
     return { message: 'Contraseña actualizada correctamente' };
   }
 
+  async googleAuth(googleUser: { googleId: string; email: string; displayName: string; avatarUrl?: string }) {
+    let user = await this.prisma.user.findUnique({ where: { googleId: googleUser.googleId } });
+
+    if (!user) {
+      const existing = await this.prisma.user.findUnique({ where: { email: googleUser.email } });
+      if (existing) {
+        user = await this.prisma.user.update({
+          where: { id: existing.id },
+          data: { googleId: googleUser.googleId, emailVerified: true },
+        });
+      } else {
+        user = await this.prisma.user.create({
+          data: {
+            email: googleUser.email,
+            googleId: googleUser.googleId,
+            displayName: googleUser.displayName,
+            avatarUrl: googleUser.avatarUrl,
+            emailVerified: true,
+          },
+        });
+      }
+    }
+
+    const tokens = await this.generateTokens(user.id, user.email, user.username ?? '');
+    await this.saveRefreshToken(user.id, tokens.refreshToken);
+
+    return { ...tokens, needsUsername: !user.username, isOnboarded: user.isOnboarded };
+  }
+
   async logout(userId: string) {
     await this.prisma.user.update({
       where: { id: userId },
