@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -24,7 +24,7 @@ const schema = z.object({
 
 type Form = z.infer<typeof schema>;
 
-export default function SetupProfilePage() {
+function SetupProfileContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setAuth } = useAuthStore();
@@ -113,5 +113,17 @@ export default function SetupProfilePage() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function SetupProfilePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-violet-500 mx-auto" />
+      </div>
+    }>
+      <SetupProfileContent />
+    </Suspense>
   );
 }
